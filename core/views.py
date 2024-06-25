@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from core.models import CheckList
 from core.serializers import CheckListSerializer
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from django.http import Http404
 
 
@@ -41,6 +42,7 @@ class CheckListAPIView(APIView):
 
 class CheckListsAPIView(APIView):
     serializer_class = CheckListSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_object(self, pk):
         try:
