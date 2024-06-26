@@ -16,12 +16,20 @@ from core.models import CheckList, CheckListItem
 class CheckListItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = CheckListItem
-        fields = '__all__'
+        fields = "__all__"
+
 
 class CheckListSerializer(serializers.ModelSerializer):
-    items = CheckListItemSerializer(source='checklistitem_set',many=True)
+    items = CheckListItemSerializer(many=True, read_only=True)
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
         model = CheckList
         fields = "__all__"
 
+    def create(self, validated_data):
 
+        validated_data.pop("user", None)
+        user = self.context["request"].user
+        checklist = CheckList.objects.create(user=user, **validated_data)
+        return checklist
